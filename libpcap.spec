@@ -6,7 +6,7 @@
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
 Version:	0.9.5
-Release:	%mkrel 3
+Release:	%mkrel 4
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
@@ -62,10 +62,11 @@ compile applications such as tcpdump, etc.
 %setup -q
 
 %build
+%serverbuild
 
 %configure2_5x --enable-ipv6
 
-%make "CCOPT=$RPM_OPT_FLAGS -fPIC"
+%make "CCOPT=$CFLAGS -fPIC"
 
 # nah, doing it the hard way instead...
 #%%make "CCOPT=$RPM_OPT_FLAGS -fPIC" shared
@@ -111,5 +112,3 @@ install -m0644 pcap-int.h %{buildroot}%{_includedir}/
 %{_libdir}/libpcap.so
 %{_libdir}/libpcap.a
 %{_mandir}/man3/pcap.3*
-
-
