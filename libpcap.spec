@@ -28,8 +28,9 @@ capture modules in each application.
 %package -n	%{libname}
 Summary:	A system-independent interface for user-level packet capture
 Group:          System/Libraries
-Obsoletes:      %{name}
+Obsoletes:      %{name} < %{version}-%{release}
 Provides:	%{name} = %{version}-%{release}
+Provides:       pcap = %{version}-%{release}
 
 %description -n	%libname
 Libpcap provides a portable framework for low-level network monitoring. Libpcap
@@ -42,8 +43,9 @@ capture modules in each application.
 %package -n	%{libdevel}
 Summary:	Static library and header files for the pcap library
 Group:		Development/C
-Obsoletes:	%{name}-devel
+Obsoletes:	%{name}-devel < %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
+Provides:       pcap-devel = %{version}-%{release}
 Requires:	%{libname} = %{version}-%{release}
 
 %description -n	%libdevel
