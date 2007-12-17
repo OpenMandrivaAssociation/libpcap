@@ -15,7 +15,6 @@ Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	autoconf2.5
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 Libpcap provides a portable framework for low-level network monitoring. Libpcap
