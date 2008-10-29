@@ -1,12 +1,11 @@
-%define	major 0
-%define minor 9
+%define major 1
 %define libname %mklibname pcap %major
-%define libdevel %libname-devel
+%define develname %mklibname pcap -d
 
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	0.9.8
-Release:	%mkrel 3
+Version:	1.0.0
+Release:	%mkrel 1
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
@@ -32,7 +31,7 @@ Obsoletes:      %{name} < %{version}-%{release}
 Provides:	%{name} = %{version}-%{release}
 Provides:       pcap = %{version}-%{release}
 
-%description -n	%libname
+%description -n	%{libname}
 Libpcap provides a portable framework for low-level network monitoring. Libpcap
 can provide network statistics collection, security monitoring and network
 debugging.  Since almost every system vendor provides a different interface for
@@ -40,15 +39,15 @@ packet capture, the libpcap authors created this system-independent API to ease
 in porting and to alleviate the need for several system-dependent packet
 capture modules in each application.
 
-%package -n	%{libdevel}
+%package -n	%{develname}
 Summary:	Static library and header files for the pcap library
 Group:		Development/C
-Obsoletes:	%{name}-devel < %{version}-%{release}
-Provides:	%{name}-devel = %{version}-%{release}
-Provides:       pcap-devel = %{version}-%{release}
 Requires:	%{libname} = %{version}-%{release}
+Provides:	pcap-devel = %{version}-%{release}
+Provides:	%{name}-devel = %{version}-%{release}
+Obsoletes:	%{mklibname pcap -d 0}
 
-%description -n	%libdevel
+%description -n	%{develname}
 Libpcap provides a portable framework for low-level network monitoring. Libpcap
 can provide network statistics collection, security monitoring and network
 debugging.  Since almost every system vendor provides a different interface for
@@ -66,37 +65,24 @@ compile applications such as tcpdump, etc.
 %build
 %serverbuild
 
-%configure2_5x --enable-ipv6
+%configure2_5x \
+    --enable-ipv6
 
-%make "CCOPT=$CFLAGS -fPIC"
-
-# nah, doing it the hard way instead...
-#%%make "CCOPT=$RPM_OPT_FLAGS -fPIC" shared
-
-#
-# (fg) FIXME - UGLY - HACK - but libpcap's Makefile doesn't allow to build a
-# shared lib...
-#
-
-gcc -Wl,-soname,libpcap.so.%{major} -shared -fPIC -o libpcap.so.%{major}.%{minor} *.o
+%make "CCOPT=$CFLAGS -fPIC" all
+%make "CCOPT=$CFLAGS -fPIC" shared
 
 %install
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+rm -rf %{buildroot}
 
-%makeinstall_std
+install -d %{buildroot}%{_bindir}
 
-install -m755 libpcap.so.%{major}.%{minor} %{buildroot}%{_libdir}
+make DESTDIR=%{buildroot} install
+make DESTDIR=%{buildroot} install-shared
 
-pushd %{buildroot}%{_libdir} && {
-    ln -s libpcap.so.%{major}.%{minor} libpcap.so.0
-    ln -s libpcap.so.%{major}.%{minor} libpcap.so
-} && popd
+ln -snf libpcap.so.%{major} %{buildroot}%{_libdir}/libpcap.so
 
 # install additional headers
 install -m0644 pcap-int.h %{buildroot}%{_includedir}/
-
-%clean
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
 
 %if %mdkversion < 200900
 %post -n %{libname} -p /sbin/ldconfig
@@ -106,15 +92,21 @@ install -m0644 pcap-int.h %{buildroot}%{_includedir}/
 %postun -n %{libname} -p /sbin/ldconfig
 %endif
 
+%clean
+rm -rf %{buildroot}
+
 %files -n %{libname}
 %defattr(-,root,root)
-%doc README* CREDITS FILES INSTALL.txt LICENSE VERSION doc
-%{_libdir}/libpcap.so.*
+%doc README* CREDITS INSTALL.txt LICENSE
+%{_libdir}/libpcap.so.%{major}*
 
-%files -n %{libdevel}
+%files -n %{develname}
 %defattr(-,root,root)
 %doc CHANGES TODO
-%{_includedir}/*
+%{_bindir}/pcap-config
+%dir %{_includedir}/pcap
+%{_includedir}/pcap/*.h
+%{_includedir}/*.h
 %{_libdir}/libpcap.so
 %{_libdir}/libpcap.a
-%{_mandir}/man3/pcap.3*
+%{_mandir}/man?/*
