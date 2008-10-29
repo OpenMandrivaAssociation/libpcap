@@ -5,7 +5,7 @@
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
 Version:	1.0.0
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
@@ -13,6 +13,7 @@ Source0:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
 BuildRequires:	bison
 BuildRequires:	flex
+BuildRequires:	bluez-devel
 BuildRequires:	autoconf2.5
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
