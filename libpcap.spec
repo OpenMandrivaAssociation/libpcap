@@ -5,7 +5,7 @@
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
 Version:	1.0.0
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
@@ -84,6 +84,7 @@ ln -snf libpcap.so.%{major} %{buildroot}%{_libdir}/libpcap.so
 
 # install additional headers
 install -m0644 pcap-int.h %{buildroot}%{_includedir}/
+install -m0644 pcap/bluetooth.h %{buildroot}%{_includedir}/pcap/
 
 %if %mdkversion < 200900
 %post -n %{libname} -p /sbin/ldconfig
