@@ -11,6 +11,7 @@ Group:		System/Libraries
 URL:		http://www.tcpdump.org/
 Source0:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
+Patch0:		libpcap-1.0.0-LDFLAGS.diff
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	bluez-devel
@@ -62,6 +63,7 @@ compile applications such as tcpdump, etc.
 %prep
 
 %setup -q
+%patch0 -p0
 
 %build
 %serverbuild
