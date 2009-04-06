@@ -5,13 +5,17 @@
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
 Version:	1.0.0
-Release:	%mkrel 4
+Release:	%mkrel 5
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
 Source0:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
 Patch0:		libpcap-1.0.0-LDFLAGS.diff
+# (misc) fix the -i any, 
+# http://sourceforge.net/tracker/?func=detail&aid=2593897&group_id=53067&atid=469577
+# commit 8fa17a5a554aaeb85d3ec4118b45a31f1efd6808 from upstream
+Patch1:     libpcap-1.0.0-fix_handling_of_any.diff
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	bluez-devel
@@ -64,7 +68,7 @@ compile applications such as tcpdump, etc.
 
 %setup -q
 %patch0 -p0
-
+%patch1 -p1
 %build
 %serverbuild
 
