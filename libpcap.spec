@@ -5,7 +5,7 @@
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
 Version:	1.0.0
-Release:	%mkrel 5
+Release:	%mkrel 6
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
@@ -16,6 +16,10 @@ Patch0:		libpcap-1.0.0-LDFLAGS.diff
 # http://sourceforge.net/tracker/?func=detail&aid=2593897&group_id=53067&atid=469577
 # commit 8fa17a5a554aaeb85d3ec4118b45a31f1efd6808 from upstream
 Patch1:     libpcap-1.0.0-fix_handling_of_any.diff
+# (misc) use usbmon to sniff on usb bus, and allow to use tcpdump -i usb0
+# patch from debian, applied upstream ( 3866e831 )
+# http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=520259
+Patch2:     libpcap-1.0.0-fix_usb_network_sniffing.diff
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	bluez-devel
@@ -69,6 +73,8 @@ compile applications such as tcpdump, etc.
 %setup -q
 %patch0 -p0
 %patch1 -p1
+%patch2 -p0
+
 %build
 %serverbuild
 
