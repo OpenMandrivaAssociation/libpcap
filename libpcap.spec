@@ -4,7 +4,7 @@
 
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	1.1.0
+Version:	1.1.1
 Release:	%mkrel 1
 License:	BSD
 Group:		System/Libraries
@@ -22,7 +22,7 @@ Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
 #Patch2:     libpcap-1.0.0-fix_usb_network_sniffing.diff
 BuildRequires:	bison
 BuildRequires:	flex
-BuildRequires:	bluez-devel
+BuildRequires:	libnl-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -69,7 +69,7 @@ compile applications such as tcpdump, etc.
 
 %prep
 
-%setup -q -n %{name}-1.1
+%setup -q -n %{name}-%{version}
 #%patch0 -p0
 #%patch1 -p1
 #%patch2 -p0
