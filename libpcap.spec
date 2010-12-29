@@ -5,7 +5,7 @@
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
 Version:	1.1.1
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
@@ -24,6 +24,7 @@ BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	libnl-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Suggests: %name-doc
 
 %description
 Libpcap provides a portable framework for low-level network monitoring. Libpcap
@@ -32,6 +33,15 @@ debugging.  Since almost every system vendor provides a different interface for
 packet capture, the libpcap authors created this system-independent API to ease
 in porting and to alleviate the need for several system-dependent packet
 capture modules in each application.
+
+%package doc
+Summary: Manual pages for %name
+Group: Books/Other
+BuildArch: noarch
+Conflicts: %develname < 1.1.1-3
+
+%description doc
+This contains the manual pages documenting %{name}.
 
 %package -n	%{libname}
 Summary:	A system-independent interface for user-level packet capture
@@ -113,6 +123,11 @@ rm -rf %{buildroot}
 %doc README* CREDITS INSTALL.txt LICENSE
 %{_libdir}/libpcap.so.%{major}*
 
+%files doc
+%defattr(-,root,root)
+%{_mandir}/man?/*
+
+
 %files -n %{develname}
 %defattr(-,root,root)
 %doc CHANGES TODO
@@ -122,4 +137,4 @@ rm -rf %{buildroot}
 %{_includedir}/*.h
 %{_libdir}/libpcap.so
 %{_libdir}/libpcap.a
-%{_mandir}/man?/*
+
