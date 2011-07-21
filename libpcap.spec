@@ -80,9 +80,9 @@ compile applications such as tcpdump, etc.
 %prep
 
 %setup -q -n %{name}-%{version}
-#%patch0 -p0
-#%patch1 -p1
-#%patch2 -p0
+#%%patch0 -p0
+#%%patch1 -p1
+#%%patch2 -p0
 
 %build
 %serverbuild
