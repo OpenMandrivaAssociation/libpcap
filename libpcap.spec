@@ -4,8 +4,8 @@
 
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	1.2.0
-Release:	%mkrel 1
+Version:	1.2.1
+Release:	1
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
@@ -18,7 +18,6 @@ BuildRequires:	libnl-devel
 #BuildRequires:	libnl3-devel <- not yet
 # for bluetooth/bluetooth.h
 BuildRequires:	bluez-devel
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Suggests: %name-doc
 
 %description
@@ -87,8 +86,6 @@ export CFLAGS="%{optflags} -fPIC"
 %make
 
 %install
-rm -rf %{buildroot}
-
 install -d %{buildroot}%{_bindir}
 
 %makeinstall_std
@@ -100,20 +97,14 @@ install -m0644 pcap/bluetooth.h %{buildroot}%{_includedir}/pcap/
 # nuke the statis lib
 rm -f %{buildroot}%{_libdir}/libpcap.a
 
-%clean
-rm -rf %{buildroot}
-
 %files -n %{libname}
-%defattr(-,root,root)
 %doc README* CREDITS INSTALL.txt LICENSE
 %{_libdir}/libpcap.so.%{major}*
 
 %files doc
-%defattr(-,root,root)
 %{_mandir}/man?/*
 
 %files -n %{develname}
-%defattr(-,root,root)
 %doc CHANGES TODO
 %{_bindir}/pcap-config
 %dir %{_includedir}/pcap
