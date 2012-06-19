@@ -4,14 +4,16 @@
 
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	1.2.1
-Release:	2
+Version:	1.3.0
+Release:	1
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
 Source0:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
-Patch0:		libpcap-1.2.0-pcap-config_fix.diff
+Patch0:		libpcap-multilib.patch
+Patch1:		libpcap-man.patch
+Patch2:		lpthread-1.3.0-libpcap.patch
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	libnl-devel
@@ -74,16 +76,26 @@ compile applications such as tcpdump, etc.
 %prep
 
 %setup -q -n %{name}-%{version}
-%patch0 -p0
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+
+
+#sparc needs -fPIC 
+%ifarch %{sparc}
+sed -i -e 's|-fpic|-fPIC|g' configure
+%endif
 
 %build
-export CFLAGS="%{optflags} -fPIC"
+export CFLAGS="%{optflags} -fno-strict-aliasing"
+#export CFLAGS="%{optflags} -fPIC"
 
 %configure2_5x \
     --enable-ipv6 \
     --enable-bluetooth
 
 %make
+# LIBS='-lpthread'
 
 %install
 install -d %{buildroot}%{_bindir}
