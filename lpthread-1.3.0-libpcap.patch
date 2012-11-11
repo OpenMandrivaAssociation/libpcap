@@ -1,0 +1,13 @@
+diff --git a/Makefile.in b/Makefile.in
+index 772cc7d..8065973 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -52,7 +52,7 @@ INCLS = -I. @V_INCLS@
+ DEFS = @DEFS@ @V_DEFS@
+ ADDLOBJS = @ADDLOBJS@
+ ADDLARCHIVEOBJS = @ADDLARCHIVEOBJS@
+-LIBS = @LIBS@
++LIBS = @LIBS@ -lpthread
+ CFLAGS = @CFLAGS@
+ LDFLAGS = @LDFLAGS@
+ DYEXT = @DYEXT@
