@@ -5,7 +5,7 @@
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
 Version:	1.3.0
-Release:	1
+Release:	2
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
@@ -16,9 +16,8 @@ Patch1:		libpcap-man.patch
 Patch2:		lpthread-1.3.0-libpcap.patch
 BuildRequires:	bison
 BuildRequires:	flex
-BuildRequires:	libnl-devel
-#BuildRequires:	libnl3-devel <- not yet
-# for bluetooth/bluetooth.h
+#BuildRequires:	libnl-devel
+BuildRequires:	pkgconfig(libnl-3.0)
 BuildRequires:	bluez-devel
 Suggests: %name-doc
 
@@ -60,7 +59,6 @@ Group:		Development/C
 Requires:	%{libname} >= %{version}-%{release}
 Provides:	pcap-devel = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
-Obsoletes:	%{mklibname pcap -d 0}
 
 %description -n	%{develname}
 Libpcap provides a portable framework for low-level network monitoring. Libpcap
