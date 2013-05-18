@@ -1,2 +1,5 @@
+removed_sources:
+  libpcap-1.3.0.tar.gz: 90aa2f0fcfb4bf79fc50ccdaa70f484d96295be3
 sources:
-  "libpcap-1.3.0.tar.gz": 90aa2f0fcfb4bf79fc50ccdaa70f484d96295be3
+  libpcap-1.4.0.tar.gz: 9c9710aab68be58ed1d41b5c36dc2599419a80e0
+  libpcap-1.4.0.tar.gz.sig: 0f1809ef75d308af382ac51473985118a77417a3

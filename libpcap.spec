@@ -4,8 +4,8 @@
 
 Summary:        A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	1.3.0
-Release:	2
+Version:	1.4.0
+Release:	1
 License:	BSD
 Group:		System/Libraries
 URL:		http://www.tcpdump.org/
@@ -90,7 +90,8 @@ export CFLAGS="%{optflags} -fno-strict-aliasing"
 
 %configure2_5x \
     --enable-ipv6 \
-    --enable-bluetooth
+    --enable-bluetooth \
+    --with-pcap=linux
 
 %make
 # LIBS='-lpthread'
