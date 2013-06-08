@@ -1,5 +1,5 @@
 %define major	1
-%define libname	%mklibname pcap %major
+%define libname	%mklibname pcap %{major}
 %define devname	%mklibname pcap -d
 
 Summary:	A system-independent interface for user-level packet capture
