@@ -1,7 +1,7 @@
 %define major	1
 %define libname	%mklibname pcap %{major}
 %define devname	%mklibname pcap -d
-%bcond_with	bluetooth
+%bcond_without	bluetooth
 
 Summary:	A system-independent interface for user-level packet capture
 Name:		libpcap
