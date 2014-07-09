@@ -1,6 +1,7 @@
 %define major	1
 %define libname	%mklibname pcap %{major}
 %define devname	%mklibname pcap -d
+%bcond_with	bluetooth
 
 Summary:	A system-independent interface for user-level packet capture
 Name:		libpcap
@@ -16,7 +17,9 @@ Patch1:		libpcap-man.patch
 Patch2:		lpthread-1.3.0-libpcap.patch
 BuildRequires:	bison
 BuildRequires:	flex
+%if %{with bluetooth}
 BuildRequires:	pkgconfig(bluez)
+%endif
 BuildRequires:	pkgconfig(libnl-3.0)
 
 %description
@@ -77,7 +80,9 @@ export CFLAGS="%{optflags} -fno-strict-aliasing"
 %configure2_5x \
 	--disable-static \
 	--enable-ipv6 \
+%if %{with bluetooth}
 	--enable-bluetooth \
+%endif
 	--with-pcap=linux
 
 %make
