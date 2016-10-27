@@ -5,8 +5,8 @@
 
 Summary:	A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	1.5.3
-Release:	5
+Version:	1.8.1
+Release:	1
 License:	BSD
 Group:		System/Libraries
 Url:		http://www.tcpdump.org/
@@ -14,7 +14,8 @@ Source0:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
 Patch0:		libpcap-multilib.patch
 Patch1:		libpcap-man.patch
-Patch2:		lpthread-1.3.0-libpcap.patch
+Patch2:		libpcap-1.8.1-libnl.patch
+#Patch2:		lpthread-1.3.0-libpcap.patch
 BuildRequires:	bison
 BuildRequires:	flex
 %if %{with bluetooth}
@@ -93,9 +94,10 @@ to compile applications such as tcpdump, etc.
 %apply_patches
 
 %build
+autoreconf -fiv
 export CFLAGS="%{optflags} -fno-strict-aliasing"
 
-%configure2_5x \
+%configure \
 	--disable-static \
 	--enable-ipv6 \
 %if %{with bluetooth}
