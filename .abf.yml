@@ -2,3 +2,4 @@ sources:
   libpcap-1.5.3.tar.gz: 0d1502d1e46f088f5432d9d16e7fc2619cc33380
   libpcap-1.8.1.tar.gz: 32d7526dde8f8a2f75baf40c01670602aeef7e39
   libpcap-1.8.1.tar.gz.sig: fa615314fc15ad4011f73aacf442f83fa037d661
+  libpcap-1.9.0.tar.gz: c565f591c9a921fb5938cc16407c321c1ca8b9e8
