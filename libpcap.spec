@@ -86,6 +86,7 @@ to compile applications such as tcpdump, etc.
 %{_libdir}/libpcap.so
 %{_mandir}/man1/pcap-config.1*
 %{_mandir}/man3/pcap*
+%{_libdir}/pkgconfig/libpcap.pc
 
 #----------------------------------------------------------------------------
 
