@@ -5,7 +5,7 @@
 
 Summary:	A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	1.8.1
+Version:	1.9.0
 Release:	1
 License:	BSD
 Group:		System/Libraries
@@ -13,8 +13,8 @@ Url:		http://www.tcpdump.org/
 Source0:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
 Patch0:		libpcap-multilib.patch
-Patch1:		libpcap-man.patch
-Patch2:		libpcap-1.8.1-libnl.patch
+#Patch1:		libpcap-man.patch
+Patch2:		libpcap-1.9.0-libnl.patch
 #Patch2:		lpthread-1.3.0-libpcap.patch
 BuildRequires:	bison
 BuildRequires:	flex
@@ -78,7 +78,7 @@ This package contains the development pcap library and its header files needed
 to compile applications such as tcpdump, etc.
 
 %files -n %{devname}
-%doc README* CREDITS INSTALL.txt LICENSE CHANGES TODO
+%doc README* CREDITS LICENSE CHANGES TODO
 %{_bindir}/pcap-config
 %dir %{_includedir}/pcap
 %{_includedir}/pcap/*.h
@@ -86,12 +86,13 @@ to compile applications such as tcpdump, etc.
 %{_libdir}/libpcap.so
 %{_mandir}/man1/pcap-config.1*
 %{_mandir}/man3/pcap*
+%{_libdir}/pkgconfig/libpcap.pc
 
 #----------------------------------------------------------------------------
 
 %prep
 %setup -q
-%apply_patches
+%autopatch -p1
 
 %build
 autoreconf -fiv

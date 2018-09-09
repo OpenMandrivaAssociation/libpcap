@@ -1,17 +1,17 @@
 --- a/configure.ac
 +++ b/configure.ac
-@@ -453,10 +453,6 @@
+@@ -757,10 +757,6 @@
+                   ;;
  
-                 incdir=-I/usr/include/libnl3
-                 libnldir=
--                if test x$withval != x ; then
--                  libnldir=-L${withval}/lib/.libs
--                  incdir=-I${withval}/include
--                fi
+                 *)
+-                  if test -d $withval; then
+-                    libnldir=-L${withval}/lib/.libs
+-                    incdir=-I${withval}/include
+-                  fi
+                   ;;
+                 esac
  
- 		#
- 		# Try libnl 3.x first.
-@@ -471,7 +467,7 @@
+@@ -777,7 +773,7 @@
  			AC_DEFINE(HAVE_LIBNL_3_x,1,[if libnl exists and is version 3.x])
  			AC_DEFINE(HAVE_LIBNL_NLE,1,[libnl has NLE_FAILURE])
  			AC_DEFINE(HAVE_LIBNL_SOCKETS,1,[libnl has new-style socket api])
