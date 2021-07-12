@@ -14,7 +14,7 @@
 
 Summary:	A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	1.10.0
+Version:	1.10.1
 Release:	1
 License:	BSD
 Group:		System/Libraries
