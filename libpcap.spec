@@ -31,6 +31,9 @@ BuildRequires:	flex
 BuildRequires:	pkgconfig(bluez)
 %endif
 BuildRequires:	pkgconfig(libnl-3.0)
+%if %{with compat32}
+BuildRequires:	libc6
+%endif
 
 %description
 Libpcap provides a portable framework for low-level network monitoring. Libpcap
