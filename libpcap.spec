@@ -18,7 +18,7 @@ Version:	1.10.5
 Release:	1
 License:	BSD
 Group:		System/Libraries
-Url:		http://www.tcpdump.org/
+Url:		https://www.tcpdump.org/
 Source0:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
 Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
 #Patch0:		libpcap-multilib.patch
