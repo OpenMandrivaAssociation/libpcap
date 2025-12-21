@@ -25,6 +25,11 @@ Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
 #Patch1:		libpcap-man.patch
 Patch2:		libpcap-1.9.0-libnl.patch
 #Patch2:		lpthread-1.3.0-libpcap.patch
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	bison
 BuildRequires:	flex
 %if %{with bluetooth}
