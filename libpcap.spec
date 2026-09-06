@@ -38,6 +38,13 @@ BuildRequires:	pkgconfig(bluez)
 BuildRequires:	pkgconfig(libnl-genl-3.0)
 %if %{with compat32}
 BuildRequires:	libc6
+# clang -m32 reads i386-*.cfg. The i686-openmandriva target has
+# libclang_rt.profile.a and the sysroot lld needs in a fresh ABF chroot.
+BuildRequires:	cross-i686-openmandriva-linux-gnu-clang
+BuildRequires:	cross-i686-openmandriva-linux-gnu-libc
+BuildRequires:	cross-i686-openmandriva-linux-gnu-gcc
+BuildRequires:	cross-i686-openmandriva-linux-gnu-binutils
+BuildRequires:	cross-i686-openmandriva-linux-gnu-kernel-headers
 %endif
 
 %description
@@ -140,19 +147,15 @@ to compile applications such as tcpdump, etc.
 %prep
 %setup -q
 
-%build
+# 32-bit configure stays in %%prep so it never sees the PGO CFLAGS rpm
+# injects around %%build. clang -m32 uses i386-pc-linux-gnu (no profile
+# runtime); --target=i686-openmandriva-linux-gnu finds the sysroot.
 export CONFIGURE_TOP="$(pwd)"
-
 %if %{with compat32}
 mkdir build32
 cd build32
-# Drop PGO flags: -m32 looks for i386-pc-linux-gnu libclang_rt.profile.a
-# configure32 exports CFLAGS into this shell, so save the PGO flags
-# and put them back for the 64-bit configure.
-_pgo_cflags=$CFLAGS
-_pgo_ldflags=$LDFLAGS
-CFLAGS="$(echo "${CFLAGS:-%{optflags}}" | sed -e 's/ -fprofile-[^ ]*//g')" \
-LDFLAGS="$(echo "${LDFLAGS:-%{build_ldflags}}" | sed -e 's/ -fprofile-[^ ]*//g')" \
+CFLAGS="$(echo "${CFLAGS:-%{optflags}}" | sed -e 's/ -m64//g;s/ -mx32//g;s/ -flto//g;s/ -fprofile-[^ ]*//g;s/ -Wno-missing-profile//g') --target=i686-openmandriva-linux-gnu" \
+LDFLAGS="$(echo "${LDFLAGS:-%{build_ldflags}}" | sed -e 's/ -m64//g;s/ -mx32//g;s/ -flto//g;s/ -fprofile-[^ ]*//g;s/ -Wno-missing-profile//g') --target=i686-openmandriva-linux-gnu" \
 %configure32 \
 	--enable-ipv6 \
 	--disable-rdma \
@@ -162,10 +165,10 @@ LDFLAGS="$(echo "${LDFLAGS:-%{build_ldflags}}" | sed -e 's/ -fprofile-[^ ]*//g')
 %endif
 	--with-pcap=linux
 cd ..
-[ -n "$_pgo_cflags" ] && export CFLAGS="$_pgo_cflags"
-[ -n "$_pgo_ldflags" ] && export LDFLAGS="$_pgo_ldflags"
-unset _pgo_cflags _pgo_ldflags
 %endif
+
+%build
+export CONFIGURE_TOP="$(pwd)"
 
 mkdir build
 cd build
