@@ -5,6 +5,10 @@
 %bcond_with compat32
 %endif
 
+# PGO trains the 64-bit library. 32-bit -m32 has no i386 Clang profile
+# runtime, so compat32 is built without instrumentation.
+%bcond_without pgo
+
 %define major 1
 %define libname %mklibname pcap %{major}
 %define devname %mklibname pcap -d
@@ -12,30 +16,26 @@
 %define dev32name %mklib32name pcap -d
 %bcond_without bluetooth
 
+# Upstream still trips over strict aliasing in the filter compiler
+%global optflags %{optflags} -fno-strict-aliasing
+
 Summary:	A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	1.10.6
+Version:	1.10.7
 Release:	1
 License:	BSD
 Group:		System/Libraries
 Url:		https://www.tcpdump.org/
-Source0:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz
-Source1:	http://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
-#Patch0:		libpcap-multilib.patch
-#Patch1:		libpcap-man.patch
-Patch2:		libpcap-1.9.0-libnl.patch
-#Patch2:		lpthread-1.3.0-libpcap.patch
-BuildRequires:	autoconf
-BuildRequires:	automake
-BuildRequires:	libtool-base
-BuildRequires:	slibtool
-BuildRequires:	make
+Source0:	https://www.tcpdump.org/release/%{name}-%{version}.tar.gz
+Source1:	https://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
+Source2:	pgo-train.c
 BuildRequires:	bison
 BuildRequires:	flex
+BuildRequires:	make
 %if %{with bluetooth}
 BuildRequires:	pkgconfig(bluez)
 %endif
-BuildRequires:	pkgconfig(libnl-3.0)
+BuildRequires:	pkgconfig(libnl-genl-3.0)
 %if %{with compat32}
 BuildRequires:	libc6
 %endif
@@ -139,41 +139,103 @@ to compile applications such as tcpdump, etc.
 
 %prep
 %setup -q
-%autopatch -p1
 
-autoreconf -fiv
-
-export CFLAGS="%{optflags} -fno-strict-aliasing"
+%build
 export CONFIGURE_TOP="$(pwd)"
 
 %if %{with compat32}
 mkdir build32
 cd build32
+# Drop PGO flags: -m32 looks for i386-pc-linux-gnu libclang_rt.profile.a
+# configure32 exports CFLAGS into this shell, so save the PGO flags
+# and put them back for the 64-bit configure.
+_pgo_cflags=$CFLAGS
+_pgo_ldflags=$LDFLAGS
+CFLAGS="$(echo "${CFLAGS:-%{optflags}}" | sed -e 's/ -fprofile-[^ ]*//g')" \
+LDFLAGS="$(echo "${LDFLAGS:-%{build_ldflags}}" | sed -e 's/ -fprofile-[^ ]*//g')" \
 %configure32 \
-	--disable-static \
 	--enable-ipv6 \
+	--disable-rdma \
+	--disable-dbus \
 %if %{with bluetooth}
 	--enable-bluetooth \
 %endif
 	--with-pcap=linux
 cd ..
+[ -n "$_pgo_cflags" ] && export CFLAGS="$_pgo_cflags"
+[ -n "$_pgo_ldflags" ] && export LDFLAGS="$_pgo_ldflags"
+unset _pgo_cflags _pgo_ldflags
 %endif
 
 mkdir build
 cd build
 %configure \
-	--disable-static \
 	--enable-ipv6 \
+	--disable-rdma \
+	--disable-dbus \
 %if %{with bluetooth}
 	--enable-bluetooth \
 %endif
 	--with-pcap=linux
+cd ..
 
-%build
 %if %{with compat32}
 %make_build -C build32
 %endif
 %make_build -C build
+
+%if %{with pgo}
+%pgo
+# filtertest links the instrumented static library; pgo-train exercises
+# savefile I/O and pcap_offline_filter.
+%make_build -C build testprogs
+ft=build/testprogs/filtertest
+while IFS= read -r line; do
+	[ -n "$line" ] || continue
+	set -- $line
+	dlt=$1
+	shift
+	"$ft" "$dlt" "$@" >/dev/null 2>&1 || :
+done <<'EOF'
+EN10MB tcp
+EN10MB udp
+EN10MB icmp
+EN10MB arp
+EN10MB ip
+EN10MB ip6
+EN10MB port 53
+EN10MB port 80
+EN10MB port 443
+EN10MB tcp port 80
+EN10MB tcp port 443
+EN10MB udp port 53
+EN10MB host 1.2.3.4
+EN10MB net 10.0.0.0/8
+EN10MB tcp and port 80
+EN10MB not port 22
+EN10MB vlan
+EN10MB greater 64
+EN10MB tcp[tcpflags] & (tcp-syn|tcp-fin) != 0
+EN10MB udp port 53 or udp port 5353
+LINUX_SLL tcp
+LINUX_SLL udp port 53
+LINUX_SLL2 ip or ip6
+RAW tcp
+IPV4 tcp port 443
+PPP ip
+IEEE802_11 ip
+EOF
+build/testprogs/findalldevstest >/dev/null 2>&1 || :
+build/testprogs/versiontest >/dev/null 2>&1 || :
+
+# Link the trainer to the instrumented static library (same as filtertest).
+# -fno-lto avoids pulling profile symbols through shared LTO bitcode;
+# -fprofile-generate supplies the Clang profile runtime.
+%{__cc} -O2 -fno-lto -fprofile-generate=%{_pgo_profile_dir} -I. -o pgo-train %{S:2} \
+	build/libpcap.a \
+	$(sed -n 's/^LIBS = //p' build/Makefile)
+./pgo-train
+%endif
 
 %install
 install -d %{buildroot}%{_bindir}
@@ -184,9 +246,8 @@ install -d %{buildroot}%{_bindir}
 
 %make_install -C build
 
-# install additional headers
+# wine still wants the private pcap-int.h
 install -m0644 pcap-int.h %{buildroot}%{_includedir}/
-install -m0644 pcap/bluetooth.h %{buildroot}%{_includedir}/pcap/
 
 # nuke the static lib
 rm -f %{buildroot}%{_libdir}/libpcap.a %{buildroot}%{_prefix}/lib/libpcap.a
