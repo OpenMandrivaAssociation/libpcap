@@ -22,7 +22,7 @@
 Summary:	A system-independent interface for user-level packet capture
 Name:		libpcap
 Version:	1.10.7
-Release:	1
+Release:	2
 License:	BSD
 Group:		System/Libraries
 Url:		https://www.tcpdump.org/
@@ -150,11 +150,13 @@ to compile applications such as tcpdump, etc.
 # 32-bit configure stays in %%prep so it never sees the PGO CFLAGS rpm
 # injects around %%build. clang -m32 uses i386-pc-linux-gnu (no profile
 # runtime); --target=i686-openmandriva-linux-gnu finds the sysroot.
+# -I/usr/include is required so --enable-bluetooth sees bluez headers
+# that live outside the i686 sysroot.
 export CONFIGURE_TOP="$(pwd)"
 %if %{with compat32}
 mkdir build32
 cd build32
-CFLAGS="$(echo "${CFLAGS:-%{optflags}}" | sed -e 's/ -m64//g;s/ -mx32//g;s/ -flto//g;s/ -fprofile-[^ ]*//g;s/ -Wno-missing-profile//g') --target=i686-openmandriva-linux-gnu" \
+CFLAGS="$(echo "${CFLAGS:-%{optflags}}" | sed -e 's/ -m64//g;s/ -mx32//g;s/ -flto//g;s/ -fprofile-[^ ]*//g;s/ -Wno-missing-profile//g') --target=i686-openmandriva-linux-gnu -I/usr/include" \
 LDFLAGS="$(echo "${LDFLAGS:-%{build_ldflags}}" | sed -e 's/ -m64//g;s/ -mx32//g;s/ -flto//g;s/ -fprofile-[^ ]*//g;s/ -Wno-missing-profile//g') --target=i686-openmandriva-linux-gnu" \
 %configure32 \
 	--enable-ipv6 \
