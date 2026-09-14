@@ -21,8 +21,8 @@
 
 Summary:	A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	1.10.7
-Release:	2
+Version:	1.11.0
+Release:	1
 License:	BSD
 Group:		System/Libraries
 Url:		https://www.tcpdump.org/
@@ -100,7 +100,7 @@ This package contains the development pcap library and its header files needed
 to compile applications such as tcpdump, etc.
 
 %files -n %{devname}
-%doc README* CREDITS LICENSE CHANGES TODO
+%doc README* CREDITS LICENSE CHANGES
 %{_bindir}/pcap-config
 %dir %{_includedir}/pcap
 %{_includedir}/pcap/*.h
@@ -159,7 +159,6 @@ cd build32
 CFLAGS="$(echo "${CFLAGS:-%{optflags}}" | sed -e 's/ -m64//g;s/ -mx32//g;s/ -flto//g;s/ -fprofile-[^ ]*//g;s/ -Wno-missing-profile//g') --target=i686-openmandriva-linux-gnu -I/usr/include" \
 LDFLAGS="$(echo "${LDFLAGS:-%{build_ldflags}}" | sed -e 's/ -m64//g;s/ -mx32//g;s/ -flto//g;s/ -fprofile-[^ ]*//g;s/ -Wno-missing-profile//g') --target=i686-openmandriva-linux-gnu" \
 %configure32 \
-	--enable-ipv6 \
 	--disable-rdma \
 	--disable-dbus \
 %if %{with bluetooth}
@@ -175,7 +174,6 @@ export CONFIGURE_TOP="$(pwd)"
 mkdir build
 cd build
 %configure \
-	--enable-ipv6 \
 	--disable-rdma \
 	--disable-dbus \
 %if %{with bluetooth}
