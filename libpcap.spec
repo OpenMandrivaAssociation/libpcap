@@ -21,13 +21,13 @@
 
 Summary:	A system-independent interface for user-level packet capture
 Name:		libpcap
-Version:	1.11.0
+Version:	1.11.1
 Release:	1
 License:	BSD
 Group:		System/Libraries
 Url:		https://www.tcpdump.org/
-Source0:	https://www.tcpdump.org/release/%{name}-%{version}.tar.gz
-Source1:	https://www.tcpdump.org/release/%{name}-%{version}.tar.gz.sig
+Source0:	https://www.tcpdump.org/release/%{name}-%{version}.tar.xz
+Source1:	https://www.tcpdump.org/release/%{name}-%{version}.tar.xz.sig
 Source2:	pgo-train.c
 BuildRequires:	bison
 BuildRequires:	flex
